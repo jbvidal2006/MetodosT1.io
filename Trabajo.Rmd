@@ -1,5 +1,5 @@
 ---
-title: "Entrega1"
+title: "B&C Bienes y Casas"
 author: "Jamith Bolaños Vidal"
 date: "2023-08-08"
 output: html_document
@@ -9,19 +9,104 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Informe 
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r cars}
-summary(cars)
+## Interpretación
+#descarga paquete
+library(paqueteMET)
+library(mice)
+library(dplyr)
+library(stringi)
+library(ggplot2)
+
+remove_accents <- function(text) {
+  text <- stringi::stri_trans_general(text, "latin-ascii")
+  text
+}
+
+data("vivienda_faltantes")
+md.pattern(vivienda_faltantes, rotate.names = TRUE)
+head(vivienda,5)
+variables <- c("zona","estrato","preciom","areaconst","banios","habitac","tipo","barrio","longitud","latitud")
+viviendaNA <- vivienda_faltantes[,variables]
+md.pattern(viviendaNA, rotate.names = TRUE)
+viviendaDepurada <- na.omit(viviendaNA)
+md.pattern(viviendaDepurada, rotate.names = TRUE)
+hist(viviendaDepurada$preciom, main = "Histograma de Precios de Viviendas", xlab = "Precio")
+
+#grafico precio vs zona
+boxplot(viviendaDepurada$preciom ~ viviendaDepurada$zona)
+
+# Gráfico de barras para la distribución por zona y estrato
+ggplot(viviendaDepurada, aes(x = zona, fill = as.factor(estrato))) +
+  geom_bar(position = "dodge") +
+  labs(title = "Distribución por Zona y Estrato")
+
+zona = table(viviendaDepurada$zona)
+pie(zona)
+viviendaDepurada <- viviendaDepurada %>% mutate(tipo = recode(tipo,"Apartamento" = "apartamento", "APARTAMENTO" =  "apartamento", "apto" = "apartamento", "Casa" = "casa", "CASA"="casa"))
+
+# Gráfico de dispersión de precio vs. área de construcción
+ggplot(viviendaDepurada, aes(x = areaconst, y = preciom)) +
+  geom_point() +
+  labs(title = "Relación entre Precio y Área de Construcción",
+       x = "Área de Construcción",
+       y = "Precio")
+
+# Gráfico de mapa con ubicación de propiedades
+ggplot(viviendaDepurada, aes(x = longitud, y = latitud)) +
+  geom_point() +
+  labs(title = "Ubicación de Propiedades")
+
+# Tabla resumen de características promedio por tipo de propiedad
+tabla_caracteristicas <- viviendaDepurada %>%
+  group_by(tipo) %>%
+  summarise(promedio_area = mean(areaconst),
+            promedio_precio = mean(preciom),
+            promedio_banios = mean(banios),
+            promedio_habitac = mean(habitac)) %>%
+  arrange(promedio_precio, decreasing = TRUE)
+
+knitr::kable(tabla_caracteristicas, caption = "Promedio de Características por Tipo de Propiedad")
+
+estratoVsZona = table(viviendaDepurada$preciom, viviendaDepurada$zona)
+barplot(estratoVsZona)
+table(viviendaDepurada$zona)
+table(viviendaDepurada$estrato)
+table(viviendaDepurada$preciom)
+table(viviendaDepurada$areaconst)
+table(viviendaDepurada$banios)
+table(viviendaDepurada$habitac)
+table(viviendaDepurada$tipo)
+table(viviendaDepurada$barrio)
+viviendaDepurada <- viviendaDepurada %>% mutate(barrio = toupper(trimws(remove_accents(barrio))))
+table(viviendaDepurada$barrio)
+
+#summary(modelo)
+summary(vivienda)
+
+
 ```
+
+## Introducción
+## Objetivos
+## Métodos
+## Resultados
+## Discusión
+## Conclusiones
+## Anexos
 
 ## Including Plots
 
 You can also embed plots, for example:
+
+
+
 
 ```{r pressure, echo=FALSE}
 plot(pressure)
