@@ -9,12 +9,93 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Informe 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+<body>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: justify;
+        }
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: auto;
+        }
+        
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+<div class="container">
+## Introducción
+<h1 >Cali: Oportunidades en el Mercado Inmobiliario</h1>
+<p>Cali, al ser una de las ciudades más grandes de Colombia, presenta un mercado inmobiliario muy dinámico y en crecimiento. Según el último informe de Coordenada Urbana, el sistema de información de la Cámara Colombiana de la Construcción Camacol, se observa un aumento en el comercio inmobiliario del 6.6%. Esto se traduce en una gran oportunidad para impulsar el mercado en la ciudad.</p>
+    
+<p>La toma de decisiones informadas es esencial en este entorno altamente competitivo. Aquí es donde el análisis de datos toma un papel protagónico. La propuesta que presentamos recoge un estudio del comportamiento de un total de 8,327 viviendas en Cali. Este estudio está respaldado por análisis estadísticos y gráficos que permiten comprender de forma visual los análisis presentados. El objetivo es construir una campaña de marketing exitosa.</p>
+    
+<p>A lo largo de este informe, exploraremos el comportamiento del mercado inmobiliario en Cali y cómo los datos pueden guiar nuestras estrategias de marketing. Los análisis estadísticos y las visualizaciones en este informe proporcionarán información valiosa para segmentar el mercado, identificar oportunidades clave y crear estrategias que resuenen con los compradores potenciales.</p>
+    
+<p>En un mercado competitivo como el inmobiliario de Cali, es crucial estar al tanto de las tendencias y preferencias cambiantes de los compradores. Al hacerlo, estaremos equipados para tomar decisiones informadas que maximicen el impacto de nuestras campañas de marketing y nos permitan destacar en este emocionante y dinámico entorno.</p>
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
+## Objetivos
+### Objetivo general
+<p>Aportar a la toma de decisiones de la compañía B&C Bienes y Casas para la construccion de una campaña de marketing haciendo uso de análisis de datos
+</p>
+### Objetivos específicos
+<li>Realizar un proceso de análisis de la base de datos del comportamiento de la vivienda en Cali para la construcción de una campaña de marketing</li>
+<li>Soportar la toma de decisiones basada en información producto del análisis estadístico</li>
+<li>Condensar el estudio realizado en un informe para la compañia B&C Bienes y casas</li>
+
+## Métodos
+<p>
+Para la construcción del siguiente informe se realizaron las siguientes etapas:
+</p>
+<li>Limpieza de datos, en este caso se evidenció que las variables relacionadas a "parquea" y "piso" tienen muchos datos faltantes, por lo tanto eliminarlos hace que un total de 3.515 registros sean ignorados, en ese sentido se toma la decisión de no tener en cuenta dichas varibales, al igual que el identificador</li>
+<li>Estandarización de datos, se evidencia que variables como tipo de vivienda y barrio no cuentan con los datos estandarizados, por lo tanto se aplica un proceso para poder unificar dichos valores y de esta mejora disminuir el ruido en los datos
+</li>
+<li>Análisis descriptivo, se inicia el proceso con un análisis descriptivo básico que permite entender la distribución de variables claves como precio de la vivienda, área de construcción, número de habitantes, se hace uso de medidas de tendencia central como la media y la mediana y de disperción como la desviación estándar para obtener una visión general de los datos</li>
+<li>Análisis de correlación, se hace uso de este análisis para entender como las diferenets variables están relacionadas entre sí, esot permite descubrir patrones y relaciones significativas</li>
+
+## Resultados
+### Precio de las vivienda
+<table>
+        <tr>
+            <th>Mínimo</th>
+            <th>1er Cuartil 25%</th>
+            <th>Mediana</th>
+            <th>Media</th>
+            <th>3er Cuartil 75%</th>
+            <th>Máximo</th>
+        </tr>
+        <tr>
+            <td>58.0</td>
+            <td>220.0</td>
+            <td>330.0</td>
+            <td>434.3</td>
+            <td>540.0</td>
+            <td>1999.0</td>
+        </tr>
+    </table>
+<br>
+<p>En la anterior información podemos observar que el valor mínimo del precio de las viviendas de todo el conjunto de datos es de 58 millones de pesos, el primer cuartil nos informa que el 25% de las viviendas representan un precio igual o menor a 220 millones de pesos, la mediana nos indica que la mitad de las viviendas tienen un precio igual o inferior a 330 millones de pesos, la media nos representa que en promedio el precio de las viviendas es de 434.3 millones de pesos, el tercer cuartil nos permite evaluar que el 75% de las viviendas tienen un precio igual o inferior a 540 millones de pesos, finalmente nos muestra que el precio máximo de la vivienda es de 1999 millones de pesos.
+</p>
+
+<p>En conclusión podemos inferir que la distribución de precios es variada, con viviendas que van desde precios bajos hasta precios muy altos, la media es más alta que la mediana debido a que está influenciada por algunos valores altos, cada cuartil nos permite observar como se distribuyen los precios por algunos rangos, toda esta información es muy util para que en la propuesta de marketing se realice una correcta segmentación de mercado, poder establecer precios competitivos en el mercado y ajustar las estrategias de marketing según las preferencias y el poder adquisitivo de los potenciales compradores. </p>
 ```{r cars}
 ## Interpretación
 #descarga paquete
@@ -24,31 +105,41 @@ library(dplyr)
 library(stringi)
 library(ggplot2)
 
+#Funcíon para eliminación de tíldes para estandarizacion de datos
 remove_accents <- function(text) {
   text <- stringi::stri_trans_general(text, "latin-ascii")
   text
 }
 
 data("vivienda_faltantes")
-md.pattern(vivienda_faltantes, rotate.names = TRUE)
-head(vivienda,5)
+#md.pattern(vivienda_faltantes, rotate.names = TRUE)
+#head(vivienda,5)
+#se priorizan las variables a utilizar
 variables <- c("zona","estrato","preciom","areaconst","banios","habitac","tipo","barrio","longitud","latitud")
 viviendaNA <- vivienda_faltantes[,variables]
-md.pattern(viviendaNA, rotate.names = TRUE)
+#md.pattern(viviendaNA, rotate.names = TRUE)
+#se omiten valores NA de los datos
 viviendaDepurada <- na.omit(viviendaNA)
-md.pattern(viviendaDepurada, rotate.names = TRUE)
-hist(viviendaDepurada$preciom, main = "Histograma de Precios de Viviendas", xlab = "Precio")
+
+summary(viviendaDepurada$preciom)
+
+
+
+
+#md.pattern(viviendaDepurada, rotate.names = TRUE)
+
+#hist(viviendaDepurada$preciom, main = "Histograma de Precios de Viviendas", xlab = "Precio")
 
 #grafico precio vs zona
-boxplot(viviendaDepurada$preciom ~ viviendaDepurada$zona)
+#boxplot(viviendaDepurada$preciom ~ viviendaDepurada$zona)
 
 # Gráfico de barras para la distribución por zona y estrato
-ggplot(viviendaDepurada, aes(x = zona, fill = as.factor(estrato))) +
-  geom_bar(position = "dodge") +
-  labs(title = "Distribución por Zona y Estrato")
+#ggplot(viviendaDepurada, aes(x = zona, fill = as.factor(estrato))) +
+#  geom_bar(position = "dodge") +
+#  labs(title = "Distribución por Zona y Estrato")
 
-zona = table(viviendaDepurada$zona)
-pie(zona)
+#zona = table(viviendaDepurada$zona)
+#pie(zona)
 viviendaDepurada <- viviendaDepurada %>% mutate(tipo = recode(tipo,"Apartamento" = "apartamento", "APARTAMENTO" =  "apartamento", "apto" = "apartamento", "Casa" = "casa", "CASA"="casa"))
 
 # Gráfico de dispersión de precio vs. área de construcción
@@ -92,24 +183,10 @@ summary(vivienda)
 
 
 ```
-
-## Introducción
-## Objetivos
-## Métodos
-## Resultados
 ## Discusión
 ## Conclusiones
 ## Anexos
 
-## Including Plots
 
-You can also embed plots, for example:
-
-
-
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+</container>
+</body>
