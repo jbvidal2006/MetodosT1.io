@@ -10,6 +10,38 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
+```{r cars, echo=FALSE, message=FALSE}
+## Interpretación
+#descarga paquete
+library(paqueteMET)
+library(mice)
+library(dplyr)
+library(stringi)
+library(corrplot)
+library(ggplot2)
+library(knitr)
+library(ggcorrplot)
+
+#Funcíon para eliminación de tíldes para estandarizacion de datos
+remove_accents <- function(text) {
+  text <- stringi::stri_trans_general(text, "latin-ascii")
+  text
+}
+
+data("vivienda_faltantes")
+#md.pattern(vivienda_faltantes, rotate.names = TRUE)
+
+#se priorizan las variables a utilizar
+variables <- c("zona","estrato","preciom","areaconst","banios","habitac","tipo","barrio","longitud","latitud")
+viviendaNA <- vivienda_faltantes[,variables]
+#md.pattern(viviendaNA, rotate.names = TRUE)
+#se omiten valores NA de los datos
+viviendaDepurada <- na.omit(viviendaNA)
+
+#md.pattern(viviendaDepurada, rotate.names = TRUE)
+
+```
+
 <body>
     <style>
         body {
@@ -96,64 +128,45 @@ Para la construcción del siguiente informe se realizaron las siguientes etapas:
 </p>
 
 <p>En conclusión podemos inferir que la distribución de precios es variada, con viviendas que van desde precios bajos hasta precios muy altos, la media es más alta que la mediana debido a que está influenciada por algunos valores altos, cada cuartil nos permite observar como se distribuyen los precios por algunos rangos, toda esta información es muy util para que en la propuesta de marketing se realice una correcta segmentación de mercado, poder establecer precios competitivos en el mercado y ajustar las estrategias de marketing según las preferencias y el poder adquisitivo de los potenciales compradores. </p>
-```{r cars}
-## Interpretación
-#descarga paquete
-library(paqueteMET)
-library(mice)
-library(dplyr)
-library(stringi)
-library(ggplot2)
+<br>
 
-#Funcíon para eliminación de tíldes para estandarizacion de datos
-remove_accents <- function(text) {
-  text <- stringi::stri_trans_general(text, "latin-ascii")
-  text
-}
+```{r echo=FALSE}
 
-data("vivienda_faltantes")
-#md.pattern(vivienda_faltantes, rotate.names = TRUE)
-#head(vivienda,5)
-#se priorizan las variables a utilizar
-variables <- c("zona","estrato","preciom","areaconst","banios","habitac","tipo","barrio","longitud","latitud")
-viviendaNA <- vivienda_faltantes[,variables]
-#md.pattern(viviendaNA, rotate.names = TRUE)
-#se omiten valores NA de los datos
-viviendaDepurada <- na.omit(viviendaNA)
+hist(viviendaDepurada$preciom, main = "Histograma de Precios de Viviendas", xlab = "Precio")
+```
 
-summary(viviendaDepurada$preciom)
+<p>
+En el anterior gráfico podemos observar la frecuencia de los datos con respecto al precio, en este sentido la tendencia alta hacia la izquierda nos demuestra que existe mayor cantidad de viviendas con un precio mucho más bajo que las viviendas con precios altos, esto nos da una idea para la segmentación de los potenciales clientes y establecer estrategias para este nicho de mercado.
+</p>
+### Área construida
+<table>
+        <tr>
+            <th>Mínimo</th>
+            <th>1er Cuartil 25%</th>
+            <th>Mediana</th>
+            <th>Media</th>
+            <th>3er Cuartil 75%</th>
+            <th>Máximo</th>
+        </tr>
+        <tr>
+            <td>30</td>
+            <td>80</td>
+            <td>123</td>
+            <td>175</td>
+            <td>229</td>
+            <td>1745</td>
+        </tr>
+    </table>
+<br>
+<p>
+El valor mínimo nos indica que al menos una vivienda tiene una área construida de 30 metros cuadrados, los cual nos indica que en los datos existen propiedades con áreas muy pequeñas, el primer cuartil nos indica que al menos el 25% de las viviendas tienen un área construida de 80 o menos metros cuadrados, una mediana de 123 nos muestra que la mitad de las construcciones tienen areas inferiores a 123 metros cuadrados y la otra mitad poseen áreas superiores a este valor, la media de 175, mayor a la mediana como en el caso anterior, nos indica que existen propiedades muchos más espaciosas comparadas con la mayoría, el tercer cuartil nos indica que al menos el 75% de las propiedades cuentan con un área construida igual o inferior a 229 metros cuadrados, finalmente observamos que al menos una vivienda cuenta con un gran espacio construido de 1745 metros cuadrados.
+<p>
+Esta información nos permite identificar el tamaño promedio de las propiedades, en la estrategia de marketing se puede emplear dicha información para construir estrategias según las preferencias de espacio de los compradores y establecer expectativas respecto a al área construida de las viviendas.
+</p>
 
-
-
-
-#md.pattern(viviendaDepurada, rotate.names = TRUE)
-
-#hist(viviendaDepurada$preciom, main = "Histograma de Precios de Viviendas", xlab = "Precio")
-
-#grafico precio vs zona
-#boxplot(viviendaDepurada$preciom ~ viviendaDepurada$zona)
-
-# Gráfico de barras para la distribución por zona y estrato
-#ggplot(viviendaDepurada, aes(x = zona, fill = as.factor(estrato))) +
-#  geom_bar(position = "dodge") +
-#  labs(title = "Distribución por Zona y Estrato")
-
-#zona = table(viviendaDepurada$zona)
-#pie(zona)
+## Promedio según tipo de propiedad
+```{r echo=FALSE, message=FALSE}
 viviendaDepurada <- viviendaDepurada %>% mutate(tipo = recode(tipo,"Apartamento" = "apartamento", "APARTAMENTO" =  "apartamento", "apto" = "apartamento", "Casa" = "casa", "CASA"="casa"))
-
-# Gráfico de dispersión de precio vs. área de construcción
-ggplot(viviendaDepurada, aes(x = areaconst, y = preciom)) +
-  geom_point() +
-  labs(title = "Relación entre Precio y Área de Construcción",
-       x = "Área de Construcción",
-       y = "Precio")
-
-# Gráfico de mapa con ubicación de propiedades
-ggplot(viviendaDepurada, aes(x = longitud, y = latitud)) +
-  geom_point() +
-  labs(title = "Ubicación de Propiedades")
-
 # Tabla resumen de características promedio por tipo de propiedad
 tabla_caracteristicas <- viviendaDepurada %>%
   group_by(tipo) %>%
@@ -165,28 +178,105 @@ tabla_caracteristicas <- viviendaDepurada %>%
 
 knitr::kable(tabla_caracteristicas, caption = "Promedio de Características por Tipo de Propiedad")
 
-estratoVsZona = table(viviendaDepurada$preciom, viviendaDepurada$zona)
-barplot(estratoVsZona)
-table(viviendaDepurada$zona)
-table(viviendaDepurada$estrato)
-table(viviendaDepurada$preciom)
-table(viviendaDepurada$areaconst)
-table(viviendaDepurada$banios)
-table(viviendaDepurada$habitac)
-table(viviendaDepurada$tipo)
-table(viviendaDepurada$barrio)
-viviendaDepurada <- viviendaDepurada %>% mutate(barrio = toupper(trimws(remove_accents(barrio))))
-table(viviendaDepurada$barrio)
+```
 
-#summary(modelo)
-summary(vivienda)
+<p>
+Los datos demuestran algo que por sentido común muchas personas infieren, es que las casas tienden a tener mucho más espacio, por lo tanto son mucho más costosas en precio pero brindan mejores garantías en cuanto a comodidas pues poseen más habitaciones y baños, esta información se puede utilizar para crear estrategías que puedan resaltar este tipo de características de acuerdo a las necesidades de los potenciales clientes.
+</p>
+
+## Precio según área
+
+```{r echo=FALSE, message=FALSE}
+plot(viviendaDepurada$areaconst, viviendaDepurada$preciom, 
+     main = "Precio vs. Area",
+     xlab = "Area", ylab = "Precio")
+```
+<p>El anterior gráfico de dispersión entre el precio y el área de construcción nos permite visualizar una tendencia general ascendente, lo que sugiere una relación positiva entre las dos varialbes, es decir, entre más grande el área construido mayor será el precio, también podemos encontrar que existe una dispersión, es decir algunos puntos no se comportan de acuerdo a la mayoría, esto nos indica que además de el área de construcción existen otros factores que pueden incidir en el precio, como la zona, el tipo de vivienda entre otros, además permite poder tener una idea clara del margen de los precios de las propiedades de acuerdo a su área, lo cual se puede convertir en un marco de referencia para la toma de decisiones.</p>
+
+## Distribución por zona
+
+```{r echo=FALSE, message=FALSE}
+zona <- table(viviendaDepurada$zona)
+#pie(zona, labels = names(zona), main = "Distribucion por Zona")
+pie(zona, labels = paste(names(zona), ": ", zona), main = "Distribucion por Zona")
+legend("topright", legend = paste(names(zona), ": ", zona), cex = 0.8, fill = rainbow(length(zona)))
+```
+<p> 
+La anterior gráfica de tortas nos permite visualizar en que zona de la ciudad se encuentran la mayor parte de propiedades, siendo la zona Sur la que más propiedades posee, seguido de la zona norte, la zona oeste y finalmente las zonas oriente y zona centro representan el menor número de propiedades, esta información es valiosa pues permite enfocar geográficamente las acciones para la campaña de marketing.
+</p>
+
+## Matriz de correlación de variables
+
+```{r echo=FALSE, message=FALSE}
+
+matriz_correlacion <- cor(select(viviendaDepurada, precio = preciom, areacontruida = areaconst, banios = banios, habitaciones = habitac))
+
+ggcorrplot(matriz_correlacion, type = "upper", lab = TRUE)+labs(title = "Matriz de correlacion")+theme(plot.title = element_text(hjust = 0.5))
 
 
 ```
-## Discusión
-## Conclusiones
-## Anexos
+<p>La matriz de correlacion permite nos permite observar como las variables numéricas se relacionan entre sí, en este sentido podemos ver que existe naturalmente una estrecha relacion entre el precio de la construcción con el área, seguido de la relación entre el precio y el número de baños, finalmente vemos que la correlación entre el número de habitaciones y el precio es débil, esta información es relevante para poder orientar la estrategía de marketing dando valor a las variables que más tienen relación.
+</p>
 
+## Precio relacionado con la zona 
+```{r echo=FALSE, message=FALSE}
+#grafico precio vs zona
+
+ggplot(viviendaDepurada, aes(x = zona, y = preciom, fill = zona)) +
+  geom_boxplot() +
+  labs(title = "Distribucion de Precios por Zona",
+       x = "Zona",
+       y = "Precio") +
+  scale_fill_discrete(name = "Zona") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+```
+<p>El diagrama de cajas nos permite observar el comportamiento de los precios de las construcciones de acuerdo a la zona, en este sentido podemos observar que los precios varian según la zona, es en la zona oeste dónde se encuentran las viviendas con un mayor precio, seguido de la zona sur, por el contrario en la zona oriente es dónde los precios de als viviendas son más bajo.
+
+</p>
+
+## Distribución por zona y estrato
+```{r echo=FALSE, message=FALSE}
+
+# Gráfico de barras para la distribución por zona y estrato
+ggplot(viviendaDepurada, aes(x = zona, fill = as.factor(estrato))) +
+  geom_bar(position = "dodge") +
+  labs(title = "Distribución por Zona y Estrato")
+
+```
+
+<p>En la anterior gráfica de barras se puede observar que los datos recolectados sólo tienen en cuenta desde el estratos tres en adelante, en este sentido, en la zona sur se encuentran mayoritariamente las construcciones que pertenecen al estrato,  y 4, 5 y 6; en la zona oeste existe mayoritariamente construcciones pertenecientes al estrato 6. La zona norte tiene una combinación variada de viviendas de diversos estratos mayoritariamente 3, 
+4 y 5, finalmente se puede observar que la zona oriente y centro están compuestas generalmente por estrato 3. de esta manera podemos obtener información real sobre la cantidad de viviendas de acuerdo al estrato socioeconómico, esto permite focalizar las estrategias a emplear.
+</p>
+
+## Discusión
+De acuerdo a la información analizada podemos recoger varios aspectos a tener en cuenta para el proceso de definición de la estrategia de marketing:
+<li>
+Los precios de las construcciones están determinados en una gran medida por la zona en dónde se encuentran, esto puede estar determinado por diferentes factores, como la ubicación, servicios y sitios cercanos, facilidad de transporte, características específicas de la zona, en este sentido se recomiento ahondar en dichas características positivas que representa cada zona con el fin de cautivar a futuros clientes
+</li>
+<li>
+Es necesario tener en cuenta como algunas características de las construcciones pueden influir significativamente en el precio de las mismas, en este sentido es necesario construir estrategias que puedan resaltar dichas características para ser más atractivas a los ciudadanos
+</li>
+<li>
+Se identifica la zona sur y la zona oeste como grandes potenciales, en este sentido pueden ser zona donde el mercado inmobiliario puede ser más estable y su priorización puede arrojar resultados postivos para la empresa
+</li>
+<li>
+Es necesario tener diversas estrategias de marketing de acuerdo a la zona donde vaya dirigida, la presentación de dicha propiedad y el enfoque que se le dé a la construcción pueden influir positivamente de acuerdo a cada zona.
+</li>
+## Conclusiones
+<li>
+Existe una diversidad en el mercado inmobiliario en la ciudad de Cali, lo cual convierte en la ciudad que posee grandes oportunidades, para lo cual es necesario atraer a los diversos segmentos y nichos de mercado 
+</li>
+<li>
+Se determinó que fundamentalmente el áre de construcción determina sustancialmente en el precio de la venta.
+</li>
+<li>
+El estudio demuestra la necesidad de una estrategía de marketing segmentada, con el objetivo de llegar a los diversos potenciales clientes.
+</li>
+## Anexos
+Enlace al código fuente que da soporte al informe.
+https://jbvidal2006.github.io/MetodosT1.io/
 
 </container>
 </body>
